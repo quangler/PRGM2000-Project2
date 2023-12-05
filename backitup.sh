@@ -13,13 +13,13 @@ b. Specify the time a backup should occur via user input.
 c. Log the date and time the backup process was completed to a log file called “Archive-Log”
 '
 
-LOG_FILE="/mnt/shared/logs/Archive-Log.txt"
+LOG_FILE="/mnt/share/logs/Archive-Log.txt"
 
 # function to backup home dir and /mnt/shared share
 backup_valuables() {
 
     home_dir=$(eval echo "~")
-    shared_dir="/mnt/shared"
+    shared_dir="/mnt/share"
     backup_dir="/mnt/backups"
 
     # backup home data and send any error code to tar_error
@@ -27,6 +27,7 @@ backup_valuables() {
 
     if [[ $? -ne 0 ]]; then
         # problems
+        echo $tar_error1
         echo "Backing up Home Directory failed, See log for details"
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Home Data backup failed with the following error: $tar_error1" >> LOG_FILE
     else
@@ -41,6 +42,7 @@ backup_valuables() {
 
     if [[ $? -ne 0 ]]; then
         # problems
+        echo $tar_error2
         echo "Backing up Share Directory failed, See log for details"
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Share Data backup failed with the following error: $tar_error2" >> LOG_FILE
     else
