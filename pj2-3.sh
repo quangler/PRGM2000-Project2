@@ -4,7 +4,7 @@
 #| Author: Matt Telford               |
 #| Class: PRGM2000                    |
 #| Assignment: Project 2 Part 3       |
-#| Title: Monitoring Host Performance |
+#| Title: Monitoring Host Resources   |
 #-------------------------------------
 
 : '
