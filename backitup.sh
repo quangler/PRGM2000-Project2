@@ -33,7 +33,7 @@ backup_valuables() {
         # success
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Home Data backup successful" >> LOG_FILE
         # find files over 8 days old and deletes them (this would be to stop backup drive from filling up with old copies)
-        find "${backup_dir}" -name 'home_backup*' -mtime +8 -delete
+        find "${backup_dir}" -name 'home_backup*' -mtime +7 -delete
     fi
 
     # backup home data and send any error code to tar_error
@@ -47,10 +47,8 @@ backup_valuables() {
         # success
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Share Data backup successful" >> LOG_FILE
         # find files over 8 days old and deletes them (this would be to stop backup drive from filling up with old copies)
-        find "${backup_dir}" -name 'share_backup*' -mtime +8 -delete
+        find "${backup_dir}" -name 'share_backup*' -mtime +7 -delete
     fi
-
-
 }
 
 function sch_Menu(){
@@ -59,6 +57,7 @@ echo "When to run the backup:"
     echo "1. Now"
     echo "2. Minutes"
     echo "3. Later Date"
+    echo "4. Cancel"
     read -p "Enter your choice (1 - 3): " choice
     
     case $choice in
@@ -80,10 +79,14 @@ EOF
                 backup_valuables
 EOF
             echo "Backup scheduled. You can check the status using the 'atq' command."
+            ;;
+        4)
+            exit 1
+
         ;;
         *)
-
-            exit 1
+            echo "Invalid choice. Try again."
+            sch_Menu
         ;;
     esac
 }

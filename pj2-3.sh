@@ -73,16 +73,16 @@ function Remote_Mon_RAM () {
         ram_stats=$(eval "$commands_to_run")
         echo -e "\nRAM:" | tee /dev/fd/3
         echo -ne "$ram_stats\n" | tee /dev/fd/3
-#        echo -e "\n-----------------------------" | tee /dev/fd/3
+
 
     elif [ "$1" != "localhost" ] ; then
 
         ram_stats=$(sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@$remote_Host "$commands_to_run")
         #unset SSHPASS
-#        echo -e "\n-----------------------------"
+
         echo -e "\nRAM:" | tee /dev/fd/3
         echo -ne "$ram_stats\n" | tee /dev/fd/3
-#        echo -e "\n-----------------------------" | tee /dev/fd/3
+
    else
       # problems
         echo "Invalid remote host or unable to establish SSH connection."
@@ -107,17 +107,17 @@ function Remote_Mon_disks () {
         disk_stats=$(eval "$commands_to_run")
         echo -e "\nStorage:" | tee /dev/fd/3
         echo -ne "$disk_stats\n" | tee /dev/fd/3
-#        echo -e "\n----------------------------------------------------------------------------" | tee /dev/fd/3
+
 
     elif [ "$1" != "localhost" ] ; then
 
         disk_stats=$(sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@$remote_Host "$commands_to_run")
         #unset SSHPASS
         
-#        echo -e "\n----------------------------------------------------------------------------"
+
         echo -e "\nStorage:" | tee /dev/fd/3
         echo -ne "$disk_stats\n" | tee /dev/fd/3
- #       echo -e "\n----------------------------------------------------------------------------" | tee /dev/fd/3
+
    else
       # problems
         echo "Invalid remote host or unable to establish SSH connection."
@@ -147,17 +147,16 @@ function Remote_Mon_Net () {
 
         echo -e "\nNetwork:" | tee /dev/fd/3
         echo -ne "$net_stats\n" | tee /dev/fd/3
-#        echo -e "\n----------------------------------------------------------------------------" | tee /dev/fd/3
+
 
     elif [ "$1" != "localhost" ] ; then
 
         net_stats=$(sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@$remote_Host "$commands_to_run")
         #unset SSHPASS
         
-#        echo -e "\n-------------------------------------------------------------------------"
         echo -e "\nNetwork:" | tee /dev/fd/3
         echo -ne "$net_stats\n" | tee /dev/fd/3
-#        echo -e "\n-------------------------------------------------------------------------" | tee /dev/fd/3
+
    else
       # problems
         echo "Invalid remote host or unable to establish SSH connection."
@@ -239,10 +238,10 @@ while true; do
                 ;;
             6)  widest_line_length=$(awk '{ if (length > max) max = length } END { print max }' "$LOG_FILE")
                 printf "%${widest_line_length}s" | tr ' ' '-' >> "$LOG_FILE"
-                #echo -e "\n--------------------------------------------------------------------------------" >> "$LOG_FILE"
+
                 exit
                 ;;
-            *) echo "Invalid choice: $option" ;;
+            *) echo "Invalid selection: $option" ;;
         esac
     done
 done
