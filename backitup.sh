@@ -18,19 +18,38 @@ LOG_FILE="/mnt/shared/logs/Archive-Log.txt"
 # function to backup home dir and /mnt/shared share
 backup_valuables() {
 
-home_dir=$(eval echo "~")
-shared_dir="/mnt/shared"
-backup_dir="/mnt/backups"
+    home_dir=$(eval echo "~")
+    shared_dir="/mnt/shared"
+    backup_dir="/mnt/backups"
 
-tar -czvf "${backup_dir}"/$(date "+%Y-%m-%dT%H-%M-%S").tar.gz "${home_dir}"
+    # backup home data and send any error code to tar_error
+    tar_error1=$(tar -czvf "${backup_dir}"/home_backup_$(date "+%Y-%m-%dT%H-%M-%S").tar.gz "${home_dir}" 2>&1)
 
-if [[ $? -eq 0 ]]; then
-    status="success"
+    if [[ $? -ne 0 ]]; then
+        # problems
+        echo "Backing up Home Directory failed, See log for details"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Home Data backup failed with the following error: $tar_error1" >> LOG_FILE
+    else
+        # success
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Home Data backup successful" >> LOG_FILE
+        # find files over 8 days old and deletes them (this would be to stop backup drive from filling up with old copies)
+        find "${backup_dir}" -name 'home_backup*' -mtime +8 -delete
+    fi
 
-    find "${service_backup_directory}" -mtime +8 -delete
-else
-    status="fail"
-fi
+    # backup home data and send any error code to tar_error
+    tar_error2=$(tar -czvf "${backup_dir}"/share_backup_$(date "+%Y-%m-%dT%H-%M-%S").tar.gz "${shared_dir}" 2>&1)
+
+    if [[ $? -ne 0 ]]; then
+        # problems
+        echo "Backing up Share Directory failed, See log for details"
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Share Data backup failed with the following error: $tar_error2" >> LOG_FILE
+    else
+        # success
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Share Data backup successful" >> LOG_FILE
+        # find files over 8 days old and deletes them (this would be to stop backup drive from filling up with old copies)
+        find "${backup_dir}" -name 'share_backup*' -mtime +8 -delete
+    fi
+
 
 }
 
@@ -67,7 +86,6 @@ EOF
             exit 1
         ;;
     esac
-
-
-
 }
+
+sch_Menu
