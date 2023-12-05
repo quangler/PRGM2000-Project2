@@ -23,9 +23,9 @@ Install sshpass:
     Arch: pacman -S sshpass
 
 '
-LOG_FILE="~/SysMonitor.txt"
+LOG_FILE="/mnt/shared/logs/SysMonitor.txt"
 # Expand the tilde (~) to the user's home directory
-LOG_FILE=$(eval echo "$LOG_FILE")
+#LOG_FILE=$(eval echo "$LOG_FILE")
 
 # fuction to get CPU usage
 
