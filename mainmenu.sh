@@ -26,7 +26,7 @@ Please enter your choice: "
                 ;;
                 2)
                 # function name for monitoring system
-                /bin/bash "$MONITOR_PATH"
+                sudo /bin/bash "$MONITOR_PATH" # need sudo here cause its a powerful command you know?
                 MainMenu
                 ;;
                 3)
