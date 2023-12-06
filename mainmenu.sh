@@ -4,7 +4,7 @@
 BACK_PATH="~/backMenu.sh"
 BACK_PATH=$(eval echo "$BACK_PATH")
 MONITOR_PATH="~/monitoring.sh"
-MONITOR_PATH=$(eval echo "$BACK_PATH")
+MONITOR_PATH=$(eval echo "$MONITOR_PATH")
 
 echo -n "Welcome to Team5 project 2" # first time running intro
 
@@ -22,10 +22,12 @@ Please enter your choice: "
                 1)
                 # function name for archival/backups
                 /bin/bash "$BACK_PATH"
+                MainMenu
                 ;;
                 2)
                 # function name for monitoring system
                 /bin/bash "$MONITOR_PATH"
+                MainMenu
                 ;;
                 3)
                 # function name for viewing logs
