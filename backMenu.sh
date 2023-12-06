@@ -8,7 +8,8 @@
 #-------------------------------------
 
 
-BACK_PATH="./backitup.sh"
+BACK_PATH="~/backitup.sh"
+BACK_PATH=$(eval echo "$BACK_PATH")
 LOG_FILE="/mnt/share/logs/Archive-Log.txt"
 
 function sch_Menu(){
@@ -32,16 +33,16 @@ echo "When to run the backup:"
         ;;
         2)
             read -p "Enter the number of minutes from now to schedule the backup: " minutes
-            at now + $minutes minutes <<EOF >> "$LOG_FILE" 2>&1
-                source "$BACK_PATH"
+            at now + $minutes minutes <<EOF
+            /bin/bash -c "$BACK_PATH"
 EOF
             echo "Backup scheduled. You can check the status using the 'atq' command."
         ;;
         3)
             read -p "Enter the date to schedule the backup (YYYY-MM-DD): " backup_date
             read -p "Enter the time to schedule the backup (HH:MM): " backup_time
-            at $backup_time $backup_date <<EOF >> "$LOG_FILE" 2>&1
-                source "$BACK_PATH"
+            at $backup_time $backup_date <<EOF 
+            /bin/bash -c "$BACK_PATH"
 EOF
             echo "Backup scheduled. You can check the status using the 'atq' command."
             ;;
