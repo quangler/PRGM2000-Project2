@@ -74,6 +74,7 @@ SelectPath(){
 
 ViewLogs(){
 # viewing logs function
+    LOGFILEARRAY=()
     while IFS= read -r LOGFILE; # reads the files in the directory
     do LOGFILEARRAY+=("$LOGFILE")       # creates an array that adds all the files from the directory
     done < <(ls "$SELECTEDLOGPATH")     # pulls from an ls of the selected path
