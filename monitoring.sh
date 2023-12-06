@@ -188,13 +188,15 @@ function setTargetHost() {
             export SSHPASS
             
             # Check SSH connection for remote host
-            if ! sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@"$targetHost" exit ; then
-                echo "Invalid remote host or unable to establish SSH connection. Please try again."
-                setTargetHost
-            else
+            if sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@"$targetHost" exit ; then
                 CURRENT_TIME=$(date +"%Y-%m-%d %H:%M:%S")
                #echo $CURRENT_TIME
                 echo -e "\nMonitoring Log for [$targetHost] on [$CURRENT_TIME]\n" >> "$LOG_FILE"
+
+            else
+
+                echo "Invalid remote host or unable to establish SSH connection. Please try again."
+                setTargetHost
             fi
             ;;
         *)
