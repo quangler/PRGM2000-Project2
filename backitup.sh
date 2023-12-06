@@ -35,7 +35,7 @@ backup_valuables() {
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Home Data backup successful" >> "$LOG_FILE"
         # find files over 8 days old and deletes them (this would be to stop backup drive from filling up with old copies)
         echo "Backing up Home Directory, cleaning up..."
-        find "${backup_dir}" -name 'home_backup*' -mtime +7 -delete
+        find "${backup_dir}" -name 'home_backup*' -mtime +7 -delete # remove week old backups
     fi
 
     # backup home data and send any error code to tar_error
@@ -51,7 +51,7 @@ backup_valuables() {
         echo "$(date '+%Y-%m-%d %H:%M:%S') - Share Data backup successful" >> "$LOG_FILE"
         # find files over 8 days old and deletes them (this would be to stop backup drive from filling up with old copies)
         echo "Backing up Share Data, cleaning up..."
-        find "${backup_dir}" -name 'share_backup*' -mtime +7 -delete
+        find "${backup_dir}" -name 'share_backup*' -mtime +7 -delete # remove week old backups
     fi
 }
 

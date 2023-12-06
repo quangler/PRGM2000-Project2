@@ -25,7 +25,6 @@ Install sshpass:
 '
 LOG_FILE="/mnt/share/logs/SysMonitor.txt"
 # Expand the tilde (~) to the user's home directory
-#LOG_FILE=$(eval echo "$LOG_FILE")
 
 # fuction to get CPU usage
 
@@ -34,22 +33,22 @@ function Remote_Mon_Cpu () {
     exec 3>&1 1>>"${LOG_FILE}" #2>&1
 
     local remote_Host=$1
+    # Return CPU monitoring command
     commands_to_run='iostat -c 1 1 | awk '\''/avg-cpu/ {getline; printf "CPU (%):\n| User   | System | Idle  |\n|--------|--------|-------|\n| %-6s | %-6s | %-4s |\n", $1, $3, $NF}'\'''
-
+    # If localhost is selected
     if [ "$1" == "localhost" ] ; then
-
+        # run command
         cpu_stats=$(eval "$commands_to_run")
+        # write to console and log
         echo -ne "\n$cpu_stats\n" | tee /dev/fd/3
-#        echo -e "\n-----------------------------" | tee /dev/fd/3
 
+    # if a remote host is selected and passed SSH test
     elif [ "$1" != "localhost" ] ; then
-
+        # SSH and run command
         cpu_stats=$(sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@$remote_Host "$commands_to_run")
-        #unset SSHPASS
-#        return $cpu_stats
-#        echo -e "\n-----------------------------"
+        # write to console and log
         echo -ne "$cpu_stats\n" | tee /dev/fd/3
-#        echo -e "\n-----------------------------" | tee /dev/fd/3
+
    else
       # problems
         echo "Invalid remote host or unable to establish SSH connection."
@@ -66,20 +65,22 @@ function Remote_Mon_RAM () {
     exec 3>&1 1>>"${LOG_FILE}" #2>&1
 
     local remote_Host=$1
+    # RAM Command
     commands_to_run='free -m'
-    
+    # If localhost is selected
     if [ "$1" == "localhost" ] ; then
-
+        # run command
         ram_stats=$(eval "$commands_to_run")
+        # write to console and log
         echo -e "\nRAM:" | tee /dev/fd/3
         echo -ne "$ram_stats\n" | tee /dev/fd/3
 
-
+     # if a remote host is selected and passed SSH test
     elif [ "$1" != "localhost" ] ; then
-
+        # SSH and run command
         ram_stats=$(sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@$remote_Host "$commands_to_run")
-        #unset SSHPASS
 
+        # write to console and log
         echo -e "\nRAM:" | tee /dev/fd/3
         echo -ne "$ram_stats\n" | tee /dev/fd/3
 
@@ -100,21 +101,21 @@ function Remote_Mon_disks () {
     exec 3>&1 1>>"${LOG_FILE}" # 2>&1
 
     local remote_Host=$1
+    # Storage Command
     commands_to_run='df -h'
-
+    # If localhost is selected
     if [ "$1" == "localhost" ] ; then
 
         disk_stats=$(eval "$commands_to_run")
+        # write to console and log
         echo -e "\nStorage:" | tee /dev/fd/3
         echo -ne "$disk_stats\n" | tee /dev/fd/3
 
-
+     # if a remote host is selected and passed SSH test
     elif [ "$1" != "localhost" ] ; then
-
+        # SSH and run command
         disk_stats=$(sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@$remote_Host "$commands_to_run")
-        #unset SSHPASS
-        
-
+        # write to console and log
         echo -e "\nStorage:" | tee /dev/fd/3
         echo -ne "$disk_stats\n" | tee /dev/fd/3
 
@@ -137,23 +138,22 @@ function Remote_Mon_Net () {
     exec 3>&1 1>>"${LOG_FILE}" #2>&1
 
     local remote_Host=$1
-
-    #current_date=$(date +"%Y-%m-%d")
+    # Network Command
     commands_to_run='vnstat --days 1'
-
+    # If localhost is selected
     if [ "$1" == "localhost" ] ; then
 
         net_stats=$(eval "$commands_to_run")
-
+        # write to console and log
         echo -e "\nNetwork:" | tee /dev/fd/3
         echo -ne "$net_stats\n" | tee /dev/fd/3
 
-
+    # if a remote host is selected and passed SSH test
     elif [ "$1" != "localhost" ] ; then
-
+        # SSH and run command
         net_stats=$(sshpass -e ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no mattt_admin@$remote_Host "$commands_to_run")
-        #unset SSHPASS
-        
+
+        # write to console and log
         echo -e "\nNetwork:" | tee /dev/fd/3
         echo -ne "$net_stats\n" | tee /dev/fd/3
 
@@ -177,13 +177,14 @@ function setTargetHost() {
         1)
             targetHost="localhost"
             CURRENT_TIME=$(date +"%Y-%m-%d %H:%M:%S")
+            # Start Logging
             echo -e "\nMonitoring Log for [$targetHost] on [$CURRENT_TIME]\n" >> "$LOG_FILE"
             ;;
         2)
             read -p "Enter the hostname for remote monitoring: " remoteHost
             targetHost="$remoteHost"
             echo "Password to use:"
-            read -s SSHPASS
+            read -s SSHPASS # Get SSH PASSWORD
             export SSHPASS
             
             # Check SSH connection for remote host
@@ -213,17 +214,15 @@ function show_mon_menu() {
     echo "5. Back"
     echo "6. Exit"
 }
-
+# get target
 setTargetHost
-
+# menu Loop
 while true; do
+
     show_mon_menu
-    
-#    widest_line_length=$(awk '{ if (length > max) max = length } END { print max }' "$LOG_FILE")
-#    printf "%${widest_line_length}s" | tr ' ' '-' >> "$LOG_FILE"
 
     read -p "Enter your choices (1-6): " choices 
-    #echo "does this go too?"
+
     IFS=',' read -ra selected_options <<< "$choices"
 
     for option in "${selected_options[@]}"; do
@@ -232,18 +231,19 @@ while true; do
             2) Remote_Mon_RAM "$targetHost";;
             3) Remote_Mon_disks "$targetHost";;
             4) Remote_Mon_Net "$targetHost";;
-            5)  widest_line_length=$(awk '{ if (length > max) max = length } END { print max }' "$LOG_FILE")
+            5)  
+                widest_line_length=$(awk '{ if (length > max) max = length } END { print max }' "$LOG_FILE") # underline each LOG
                 printf "%${widest_line_length}s" | tr ' ' '-' >> "$LOG_FILE"
-                setTargetHost
+                setTargetHost # Restart
                 ;;
-            6)  widest_line_length=$(awk '{ if (length > max) max = length } END { print max }' "$LOG_FILE")
+            6)  # under line and exit
+                widest_line_length=$(awk '{ if (length > max) max = length } END { print max }' "$LOG_FILE")
                 printf "%${widest_line_length}s" | tr ' ' '-' >> "$LOG_FILE"
-
                 exit
                 ;;
             *) echo "Invalid selection: $option" ;;
         esac
     done
 done
-
+# clear Password
 unset SSHPASS
