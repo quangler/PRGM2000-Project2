@@ -156,7 +156,7 @@ InfoGrabber(){
 
     for ADDRESS in "${IPARRAY[@]}"; do # loop for each IP address in IPARRAY
         echo "Checking operating system... ($ADDRESS)" # lets user know which IP is being checked
-        nmap -O --min-rate=1000 -T5 $ADDRESS > "$TEMPFILE" # this places result of OS finding operation in a temporary file
+        sudo nmap -O --min-rate=1000 -T5 $ADDRESS > "$TEMPFILE" # this places result of OS finding operation in a temporary file
         
         #windows detection --------------------------------------------------------------------
         if grep -q "Microsoft Windows" "$TEMPFILE"; # windows OS detection
@@ -211,6 +211,8 @@ InfoGrabber(){
         fi
     done
     unset SSHPASS   # clears SSHPASS for next use
+    echo "Returning to main menu..."
+    MainMenu
 }
 
 MainMenu    # runs main menu function
