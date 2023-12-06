@@ -72,7 +72,7 @@ function Remote_Mon_RAM () {
         # run command
         ram_stats=$(eval "$commands_to_run")
         # write to console and log
-        echo -e "\nRAM:" | tee /dev/fd/3
+        echo -e "\nRAM (MB):" | tee /dev/fd/3
         echo -ne "$ram_stats\n" | tee /dev/fd/3
 
      # if a remote host is selected and passed SSH test
