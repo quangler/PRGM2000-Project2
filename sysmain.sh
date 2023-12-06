@@ -33,7 +33,7 @@ Please enter your choice: "
                 ;;
                 2)
                 # function for monitoring system
-                sudo /bin/bash "$MONITOR_PATH" # need sudo here cause its a powerful command you know?
+                /bin/bash "$MONITOR_PATH" # need sudo here cause its a powerful command you know?
                 MainMenu
                 ;;
                 3)
@@ -129,13 +129,13 @@ ViewLogs(){
 
 NetworkScanner(){
 # finds the alive hosts in the given subnets
-    SUBNETS=("10.5.0.0/16") #"10.105.0.0/16") # these are the subnets in our environment - change these if yours are different
+    SUBNETS=("10.5.0.0/16" "10.105.0.0/16") # these are the subnets in our environment - change these if yours are different
     NETWORKTEMP=$(mktemp)   # creates a temporary file for storing the hosts on network
     
     #finding hosts -------------------------------------------------------------------------
     for NETWORK in "${SUBNETS[@]}"; do # loop that goes through each network in a given subnet
         echo "Currently scanning $NETWORK..."
-        nmap -sn -T5 --min-rate=10000 "$NETWORK" >> "$NETWORKTEMP" # quickly identifies the hosts on a network
+        sudo nmap -sn -T5 --min-rate=10000 "$NETWORK" >> "$NETWORKTEMP" # quickly identifies the hosts on a network
     done   
 }
 
@@ -163,7 +163,7 @@ InfoGrabber(){
             then echo "Windows machine detected."
 
             echo "" | tee -a "$OUTPUTFILE" # adds a new line to the file for visibility
-            sudo sshpass -e ssh $USERCREDENTIALS@$ADDRESS -o ConnectTimeout=3 'powershell -Command "Write-Host \"Hostname: \" -NoNewline; Write-Host (hostname); Write-Host \"IP Address: \" -NoNewline; Write-Host ((Get-NetIPAddress -AddressFamily IPv4).IPAddress); Write-Host \"Default Gateway: \" -NoNewline; Write-Host ((Get-NetRoute -DestinationPrefix 0.0.0.0/0).NextHop); Write-Host \"DNS: \" -NoNewline; Write-Host ((Get-DnsClientServerAddress -AddressFamily IPv4).ServerAddresses)" && exit' | tee -a "$OUTPUTFILE" # ssh command for windows config display
+            sshpass -e ssh $USERCREDENTIALS@$ADDRESS -o ConnectTimeout=3 'powershell -Command "Write-Host \"Hostname: \" -NoNewline; Write-Host (hostname); Write-Host \"IP Address: \" -NoNewline; Write-Host ((Get-NetIPAddress -AddressFamily IPv4).IPAddress); Write-Host \"Default Gateway: \" -NoNewline; Write-Host ((Get-NetRoute -DestinationPrefix 0.0.0.0/0).NextHop); Write-Host \"DNS: \" -NoNewline; Write-Host ((Get-DnsClientServerAddress -AddressFamily IPv4).ServerAddresses)" && exit' | tee -a "$OUTPUTFILE" # ssh command for windows config display
             
             EXITSTATUS=${PIPESTATUS[0]} # sets the error code that it checks to the SSH command
             if [ $EXITSTATUS -gt 0 ];   # checks for error code >1 (error has occured)
