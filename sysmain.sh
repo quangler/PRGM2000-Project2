@@ -1,5 +1,5 @@
 #!/bin/bash
-#PRGM2000 - Project 2 Main Menu
+#PRGM2000 - Project 2 Main Menu Hand in
 #Quinn Parent 
 #Matt Telford
 
